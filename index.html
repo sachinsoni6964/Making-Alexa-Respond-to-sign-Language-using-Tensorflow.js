@@ -1,0 +1,197 @@
+<html lang="en">
+  <head>
+    <!-- Load the latest version of TensorFlow.js -->
+    <!--<script src="https://unpkg.com/@tensorflow/tfjs"></script>
+    <script src="https://unpkg.com/@tensorflow-models/mobilenet"></script>
+	<script src="https://unpkg.com/@tensorflow-models/knn-classifier"></script>
+	<link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light" rel="stylesheet">
+     --> 
+	 <script src="tensorflow_ts.js"></script>
+    <script src="mobilenet.js"></script>
+	<script src="Knn_classifier.js"></script>
+	 <link href="googleaps.css" rel="stylesheet">
+	
+       <link rel="stylesheet" href="Bootstrap.css">
+  <script src="Bootstrap1.js"></script>
+  <script src="Bootstrap2.js"></script>
+      <link rel="stylesheet" href="style.css">
+      <link href="https://www.miraclesoft.com/images/favicon.ico" rel="shortcut icon">
+  </head>
+    <title>Miracle Software Systems</title>
+  <style>
+      .vid{
+          position: absolute;
+          left: 60%;
+          top:11.8%;
+      }
+      img{
+      width: 17%;
+          height: 11%;
+          position: absolute;
+          left: 3%;
+      }
+      body{
+          <!--background-image: url("Background_image/alexa_back5.jpg"); 
+          background-repeat: no-repeat;-->
+          height : 95%;
+          width : 95%;
+      }
+	  .speechtotext{
+		position:absolute;
+          top: 60%;
+	  }
+      .btn{
+          position: absolute;
+          top: 40%;
+          left: 50%;
+          
+      }
+      #class-b{
+          margin-top: 37px;
+      }
+      #class-c{
+          margin-top: 74px;
+      }
+      #class-d{
+          margin-top: 111px;
+      }
+      #class-e{
+          margin-top: 148px;
+      }
+      #txtInput{
+          position: absolute;
+          top: 40%;
+          left: 2%;
+          width: 45%;
+          height: 19%;
+          color: black;
+          font-size: 30px;
+      }
+      #btnSpeak{
+          position: absolute;
+          top: 60%;
+          left: 8%;
+          background-color: #1F618D  ;
+      }
+      .header{
+        width: 105.2%;
+          height: 12%;
+          text-align: center;
+          background-color: black;
+          color: blueviolet;
+          padding-top: none;
+      }
+      .p3{
+                font-family: 'Montserrat', sans-serif;
+                font-size: 200%;
+                color:#85C1E9;
+          padding-top: 2%;
+          position: absolute;
+          left: 30%;
+            }
+      .footr{
+          text-align: center;
+          position: absolute;
+          top: 95%;
+          width: 100%;
+          height: 5%;
+          font-size: 18px;
+          background-color: black;
+          color: #85C1E9;
+      }
+      
+  </style>
+  <body>
+      <div class="header">
+          <img src="Background_image/miracle-logo-light.png" >
+          <p class="p3">Making Alexa Respond to Sign Language using TensorFlow.js</p>
+          <!--<h1 style="font-size:60px">Miracle Software System</h1>
+          -->
+      </div>
+      
+ <!--Text o speech frontend code--> 
+      <div class="texttospeech">
+            <div id="console"></div>
+                <!-- Add an image that we will use to test -->
+	        <select name="" id="voiceList" style="display:none"></select><br><br>
+		  <div class="tex">
+		  <textarea class="form-control" rows="6" id="txtInput" ></textarea>
+          </div><br><br>
+          <div class="btn1"><button type="button" id="btnSpeak" class="btn btn-lg">Speak!</button></div>
+      </div>
+ 
+ <!-- webcam importing frontend code -->
+       <div class="vid">
+        <video autoplay playsinline muted id="webcam" width="530px" height="400px"></video>
+	   </div>
+      
+ <!-- Adding examples button creation code -->
+      <div class="container">
+	   <button type="button" id="class-a" class="btn btn-primary">Add A</button>
+	   <button type="button" id="class-b" class="btn btn-primary">Add B</button>
+	   <button type="button" id="class-c" class="btn btn-primary">Add C</button>
+	   <button type="button" id="class-d" class="btn btn-primary">Add D</button>
+	   <button type="button" id="class-e" class="btn btn-primary">Add E</button>
+      </div>
+      
+ <!-- Speech to text frontend code -->
+      <div class="mycontainer">
+            <div class="mywebapp"> 
+                <div class="input">
+                    <textarea id="textbox" class="form-control" rows="6"></textarea>
+                </div>         
+                <button type="button" id="start-btn" title="Start" class="btn btn-lg">Alexa Response</button>
+                <!--<p id="instructions">Press the Start button</p>-->
+            </div>
+        </div>
+<!-- Footer tag -->
+      <footer class="footr">© Copyrights 2019 | Miracle Software Systems, Inc.
+</footer>
+      <script src="cdn.js"></script>
+      
+ <!-- Speech to text Javascript code -->
+        <script src="script.js"></script>
+      
+ <!-- Index page own Javascript code -->
+        <script src="index.js"></script>
+      
+ <!--Text to speech Javascript code -->  
+      <script>
+	   var voiceList=document.querySelector('#voiceList');
+	   var txtInput=document.querySelector('#txtInput');
+	   var btnSpeak=document.querySelector('#btnSpeak');
+	   
+	   var tts = window.speechSynthesis;
+	   var voices = [];
+	   
+	   GetVoices();
+	   if(speechSynthesis !== undefined){
+	   	speechSynthesis.onvoiceschanged = GetVoices;
+	   }
+	   
+	   btnSpeak.addEventListener('click',()=>{
+	   	var toSpeak = new SpeechSynthesisUtterance(txtInput.value);
+	   	var selectedVoiceName = voiceList.selectedOptions[0].getAttribute('data-name');
+	   	voices.forEach((voice)=>{
+			if(voice.name === selectedVoiceName){
+				toSpeak.voice = voice;
+			}
+		}); 
+		tts.speak(toSpeak);
+	   });
+	
+	   function GetVoices(){
+		  voices = tts.getVoices();
+		voiceList.innerHTML = '';
+		  voices.forEach((voice)=>{
+			 var listItem = document.createElement('option');
+			 listItem.textContent = voice.name;
+			 listItem.setAttribute('data-lang', voice.lang);
+			 listItem.setAttribute('data-name', voice.name);
+			 voiceList.appendChild(listItem);
+		  });
+		  voiceList.selectedIndex = 0;
+	   }	
+	 </script>
+  </body>
+</html>
